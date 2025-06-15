@@ -1,7 +1,7 @@
 [project]
-name = "KM0003C"
+name = "KM003C"
 version = "0.0.1"
-description = "KM0003C Python driver"
+description = "KM003C Python driver"
 authors = [
     { name="Giorgio Frehner", email="gipean@frehner.dev" }
 ]
