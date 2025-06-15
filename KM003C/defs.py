@@ -328,8 +328,8 @@ def parse_data(data: bytes):
     if ext_header.chunk:
         size *= ext_header.chunk
     if ext_header.next_flag:
-        return [obj] + parse_data(data[4+size:])
-    return [obj]
+        return [(ext_header.att, obj)] + parse_data(data[4+size:])
+    return [(ext_header.att, obj)]
 
 def interpret_response(data):
     header = MsgHeader.from_bytes(data[:4])
