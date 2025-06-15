@@ -54,6 +54,8 @@ class PowerZ_KM003C:
         if hdr.type == CmdDataMsgType.CMD_PUT_DATA:
             return parse_data(data)
 
+        return []
+
     def close(self):
         try:
             cmd = MsgHeader(
