@@ -1,12 +1,13 @@
 import usb.core, usb.util
-from defs import *
+from .defs import *
 
 class PowerZ_KM003C:
     def __init__(self):
         self.dev = None
 
-    def __enter__(self):
-        dev = usb.core.find(idVendor=0x5fc9, idProduct=0x0063)
+    def __enter__(self, dev: usb.core.Device | None = None):
+        if not dev:
+            dev = usb.core.find(idVendor=0x5fc9, idProduct=0x0063)
         if dev is None:
             raise RuntimeError('Unable to locate POWER-Z KM003C meter')
 

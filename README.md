@@ -1,6 +1,6 @@
 # KM003C
 
-Python library for communicating with the PowerZ KM003C under linux
+Python driver for communicating with the PowerZ KM003C under linux
 
 ## Methodology
 

@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
 
-from km003c import *
+from .km003c import *
 import traceback
-import time
 import argparse
 import csv
 
@@ -59,9 +58,9 @@ def log_data(power_meter: PowerZ_KM003C, output_file, rate):
                             'vdm_mV': entry.vdm
                         })
 
-            time.sleep(0.01)
+            csvfile.flush()
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description="KM003C Data Logger")
     parser.add_argument('output', type=str,
                         help="Path to a CSV file to save the output. This parameter is mandatory.")
@@ -77,3 +76,5 @@ if __name__ == '__main__':
     except Exception:
         traceback.print_exc()
 
+if __name__ == '__main__':
+    main()

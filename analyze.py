@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-from defs import *
+from KM003C.defs import *
 import pyshark
 
 #Wireshark filter:

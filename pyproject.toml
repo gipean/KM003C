@@ -1,0 +1,17 @@
+[project]
+name = "KM0003C"
+version = "0.0.1"
+description = "KM0003C Python driver"
+authors = [
+    { name="Giorgio Frehner", email="gipean@frehner.dev" }
+]
+dependencies = ["pyusb"]
+readme = "README.md"
+license = { text = "MIT" }
+
+[project.scripts]
+km003c_logger = "KM003C.logger:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
