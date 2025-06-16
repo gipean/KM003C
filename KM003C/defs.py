@@ -140,7 +140,6 @@ class AdcData:
         self.vbus_ori_avg = vbus_ori_avg  # Uncalibrated average voltage (1 µV)
         self.ibus_ori_avg = ibus_ori_avg  # Uncalibrated average current (1 µA)
         # INA228/9 datasheet LSB = 7.8125 m°C = 1000/128
-        print(f'temp={temp}')
         msb = (temp >> 8) & 0xFF
         lsb = temp & 0xFF
         self.temp = (msb*2000 + lsb*1000/128)/1000
