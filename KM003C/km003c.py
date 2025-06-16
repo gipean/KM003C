@@ -17,27 +17,31 @@ class PowerZ_KM003C:
         self.in_endpoint = 0x81
         self.out_endpoint = 0x01
 
-        cmd = MsgHeader(
-            type=CmdCtrlMsgType.CMD_CONNECT,
-            extend=0,
-            id=0,
-            att=0
-        ).to_bytes()
-        response_header, response_data = self.send(cmd)
-        if response_header.type == CmdCtrlMsgType.CMD_REJECT:
-            raise CommandRejected(response_header)
-        if response_header.type != CmdCtrlMsgType.CMD_ACCEPT:
-            raise IOError(response_header)
+        try:
+            cmd = MsgHeader(
+                type=CmdCtrlMsgType.CMD_CONNECT,
+                extend=0,
+                id=0,
+                att=0
+            ).to_bytes()
+            response_header, response_data = self.send(cmd)
+            if response_header.type == CmdCtrlMsgType.CMD_REJECT:
+                raise CommandRejected(response_header)
+            if response_header.type != CmdCtrlMsgType.CMD_ACCEPT:
+                raise IOError(response_header)
 
-        #Needed to make ADC_QUEUE work
-        cmd = b'L\x00\x00\x02-\t\x9f\xb2\xff\xe3g\xdbGr\x84)\x9b\xc6"\xec?\xa1\xea\xf7B\xddY6(\xca\xe3\xd9\x82z\xec\x81'
-        response_header, response_data = self.send(cmd)
-        if response_header.type == CmdCtrlMsgType.CMD_REJECT:
-            raise CommandRejected(response_header)
-        if response_header.type != 76:
-            raise IOError(response_header)
+            #Needed to make ADC_QUEUE work
+            cmd = b'L\x00\x00\x02-\t\x9f\xb2\xff\xe3g\xdbGr\x84)\x9b\xc6"\xec?\xa1\xea\xf7B\xddY6(\xca\xe3\xd9\x82z\xec\x81'
+            response_header, response_data = self.send(cmd)
+            if response_header.type == CmdCtrlMsgType.CMD_REJECT:
+                raise CommandRejected(response_header)
+            if response_header.type != 76:
+                raise IOError(response_header)
 
-        self.id = 1
+            self.id = 1
+        except:
+            usb.util.dispose_resources(self.dev)
+            raise
 
     #Only after stopping an acquisition can the rate be changed
     def stop(self):
