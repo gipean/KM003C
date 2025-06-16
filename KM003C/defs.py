@@ -2,6 +2,9 @@
 import struct
 from enum import IntEnum
 
+class CommandRejected(Exception):
+    pass
+
 # Enum for command control message types
 class CmdCtrlMsgType(IntEnum):
     CMD_SYNC = 1
@@ -18,6 +21,7 @@ class CmdCtrlMsgType(IntEnum):
     CMD_GET_DATA = 12
     CMD_GET_FILE = 13
     CMD_SET_RATE = 14
+    CMD_STOP = 15
 
 
 # Enum for data message types

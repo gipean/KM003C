@@ -30,7 +30,8 @@ def log_data(power_meter: PowerZ_KM003C, output_file, rate):
                     })
 
             csvfile.flush()
-            time.sleep(1)
+            #Small enough for 10ksps
+            time.sleep(0.01)
 
 def main():
     parser = argparse.ArgumentParser(description="KM003C Data Logger")

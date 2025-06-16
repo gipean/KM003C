@@ -20,17 +20,42 @@ class PowerZ_KM003C:
         cmd = MsgHeader(
             type=CmdCtrlMsgType.CMD_CONNECT,
             extend=0,
-            id=1,
+            id=0,
             att=0
         ).to_bytes()
-        self.send(cmd)
+        response_header, response_data = self.send(cmd)
+        if response_header.type == CmdCtrlMsgType.CMD_REJECT:
+            raise CommandRejected(response_header)
+        if response_header.type != CmdCtrlMsgType.CMD_ACCEPT:
+            raise IOError(response_header)
 
-        #Needed to make ADC_QUEUE work (probably starts acquisition)
-        cmd = b'L\x02\x00\x02-\t\x9f\xb2\xff\xe3g\xdbGr\x84)\x9b\xc6"\xec?\xa1\xea\xf7B\xddY6(\xca\xe3\xd9\x82z\xec\x81'
-        self.send(cmd)
+        #Needed to make ADC_QUEUE work
+        cmd = b'L\x00\x00\x02-\t\x9f\xb2\xff\xe3g\xdbGr\x84)\x9b\xc6"\xec?\xa1\xea\xf7B\xddY6(\xca\xe3\xd9\x82z\xec\x81'
+        response_header, response_data = self.send(cmd)
+        if response_header.type == CmdCtrlMsgType.CMD_REJECT:
+            raise CommandRejected(response_header)
+        if response_header.type != 76:
+            raise IOError(response_header)
 
-        self.id = 3
+        self.id = 1
 
+    #Only after stopping an acquisition can the rate be changed
+    def stop(self):
+        cmd = MsgHeader(
+            type=CmdCtrlMsgType.CMD_STOP,
+            extend=0,
+            id=self.id,
+            att=0
+        ).to_bytes()
+        self.id += 1
+        response_header, response_data = self.send(cmd)
+
+        if response_header.type == CmdCtrlMsgType.CMD_REJECT:
+            raise CommandRejected(response_header)
+        if response_header.type != CmdCtrlMsgType.CMD_ACCEPT:
+            raise IOError(response_header)
+
+    #Setting rate also starts the acquisition
     def set_rate(self, rate: Rate):
         cmd = MsgHeader(
             type=CmdCtrlMsgType.CMD_SET_RATE,
@@ -38,8 +63,13 @@ class PowerZ_KM003C:
             id=self.id,
             att=rate
         ).to_bytes()
-        self.send(cmd)
         self.id += 1
+        response_header, response_data = self.send(cmd)
+
+        if response_header.type == CmdCtrlMsgType.CMD_REJECT:
+            raise CommandRejected(response_header)
+        if response_header.type != CmdCtrlMsgType.CMD_ACCEPT:
+            raise IOError(response_header)
 
     def get_data(self, att: int = AttributeDataType.ATT_ADC_QUEUE):
         cmd = MsgHeader(

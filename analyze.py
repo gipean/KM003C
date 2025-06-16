@@ -8,16 +8,25 @@ import pyshark
 
 cap = pyshark.FileCapture("capture.pcapng")
 
-def print_headers(data: bytes):
-    if len(data) == 0:
-        return
+def interpret_response(data):
     header = MsgHeader.from_bytes(data[:4])
+    if header.type == CmdCtrlMsgType.CMD_GET_DATA and header.att == AttributeDataType.ATT_ADC:
+        return header
+
+    ext_header = None
+    if header.type == CmdDataMsgType.CMD_PUT_DATA and header.obj:
+        ext_header = MsgHeaderHeader.from_bytes(data[4:8])
+        if ext_header.att == AttributeDataType.ATT_ADC:
+            return header
+
+
     print(header)
-    if header.type == CmdDataMsgType.CMD_PUT_DATA:
-        if header.obj:
-            ext_header = MsgHeaderHeader.from_bytes(data[4:8])
-            print(ext_header)
-    print_headers(data[4+(header.obj*4):])
+    if header.type == CmdDataMsgType.CMD_PUT_DATA and header.obj:
+        print(ext_header)
+        pass
+        #print_data(data[4:], header.obj*4)
+
+    return header
 
 extend = False
 for packet in cap:
@@ -33,7 +42,7 @@ for packet in cap:
             print("-" * 30)
             extend = False
             continue
-        print(repr(data))
+        #print(repr(data))
 
         extend = interpret_response(data).extend
 
